@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Meeting Notes Summarizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-gradient"></div>
+    
+    <div class="container">
+        <header class="hero-section">
+            <div class="hero-content">
+                <div class="hero-icon-container">
+                    <i class="fas fa-comments"></i>
+                    <i class="fas fa-magic hero-accent"></i>
+                </div>
+                <h1 class="hero-title">AI Meeting Notes Summarizer</h1>
+                <p class="hero-subtitle">Transform your meeting transcripts into actionable insights with AI</p>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card upload-card">
+                <div class="card-header">
+                    <i class="fas fa-upload"></i>
+                    <h2>Upload Meeting Notes</h2>
+                </div>
+                <div class="upload-zone" id="uploadZone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Drag & drop your file here or click to browse</p>
+                    <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx,.mp3,.wav,.m4a,.mp4,.webm,.ogg" hidden>
+                </div>
+                <div class="supported-formats">
+                    <div class="format-grid">
+                        <div class="format-item">
+                            <i class="fas fa-file-text"></i>
+                            <span>Text</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-file-word"></i>
+                            <span>Word</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-microphone"></i>
+                            <span>Audio</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="fileStatus" class="file-status"></div>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="card text-input-card">
+                <div class="card-header">
+                    <i class="fas fa-keyboard"></i>
+                    <h2>Enter Text Directly</h2>
+                </div>
+                <textarea id="transcriptInput" placeholder="Paste your meeting transcript here..." class="modern-textarea"></textarea>
+            </div>
+
+            <div class="card prompt-card">
+                <div class="card-header">
+                    <i class="fas fa-magic"></i>
+                    <h2>Custom Instructions</h2>
+                    <span class="optional-badge">Optional</span>
+                </div>
+                <textarea id="customPrompt" placeholder="Enter custom instructions for the AI (e.g., 'Focus on action items', 'Highlight decisions made', etc.)" class="modern-textarea small"></textarea>
+            </div>
+
+            <button id="generateBtn" class="generate-btn">
+                <i class="fas fa-sparkles"></i>
+                Generate AI Summary
+            </button>
+            
+
+            <div class="card output-card" id="outputCard" style="display: none;">
+                <div class="card-header">
+                    <i class="fas fa-file-alt"></i>
+                    <h2>Generated Summary</h2>
+                    <button class="copy-btn" id="copyBtn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="summary-container">
+                    <textarea id="summaryOutput" placeholder="Your AI-generated summary will appear here..." class="modern-textarea summary-output"></textarea>
+                </div>
+            </div>
+
+            <div class="card email-card" id="emailCard" style="display: none;">
+                <div class="card-header">
+                    <i class="fas fa-paper-plane"></i>
+                    <h2>Share Summary</h2>
+                </div>
+                <div class="email-input-group">
+                    <input type="email" id="emailInput" placeholder="Enter recipient email(s) separated by commas" class="modern-input">
+                    <button id="shareBtn" class="share-btn">
+                        <i class="fas fa-send"></i>
+                        Send
+                    </button>
+                </div>
+                <div id="emailStatus" class="email-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

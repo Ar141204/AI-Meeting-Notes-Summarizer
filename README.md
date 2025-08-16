@@ -7,7 +7,7 @@ A full-stack web application that uses Google Gemini AI to generate structured s
 - **File Upload**: Upload text files containing meeting transcripts
 - **Direct Text Input**: Paste transcript text directly into the interface
 - **Custom Instructions**: Add custom prompts to tailor the summary format
-- **AI-Powered Summarization**: Uses Google Gemini 2.5 Pro for intelligent summarization
+- **AI-Powered Summarization**: Uses Google Gemini for intelligent summarization
 - **Editable Summaries**: Edit the generated summary before sharing
 - **Email Sharing**: Share summaries via email to multiple recipients
 
@@ -15,7 +15,7 @@ A full-stack web application that uses Google Gemini AI to generate structured s
 
 ### Backend
 - **Node.js** with Express.js framework
-- **Google Gemini 2.5 Pro API** for AI summarization
+- **Google Gemini API** for AI summarization
 - **Nodemailer** for email functionality
 - **Multer** for file upload handling
 - **CORS** for cross-origin requests
@@ -35,7 +35,6 @@ A full-stack web application that uses Google Gemini AI to generate structured s
 ### 1. Clone and Install Dependencies
 
 ```bash
-cd windsurf-project
 npm install
 ```
 
@@ -59,7 +58,7 @@ EMAIL_PASS=your_gmail_app_password
 
 # Server Configuration
 PORT=3000
-NODE_ENV=development
+NODE_ENV=development or production
 ```
 
 ### 3. Gmail Setup for Email Sharing
@@ -69,7 +68,7 @@ NODE_ENV=development
    - Go to Google Account settings
    - Security → 2-Step Verification → App passwords
    - Generate a password for "Mail"
-   - Use this password in `EMAIL_PASS`
+   - Use this password in `EMAIL_PASS`(.env)
 
 ### 4. Run the Application
 
@@ -124,7 +123,7 @@ Health check endpoint.
 
 ## Usage Flow
 
-1. **Upload Transcript**: Choose a text file or paste transcript directly
+1. **Upload Transcript**: Choose a transcript file or paste transcript directly
 2. **Add Instructions**: Optionally specify how you want the summary formatted
 3. **Generate Summary**: Click "Generate Summary" to process with AI
 4. **Edit Summary**: Modify the generated summary as needed

@@ -1,10 +1,11 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "meeting-notes-summarizer",
   "version": "1.0.0",
   "description": "AI-powered meeting notes summarizer and sharer",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --max-old-space-size=512 server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {

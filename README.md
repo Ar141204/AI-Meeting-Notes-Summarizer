@@ -1,17 +1,28 @@
-# AI-Powered Meeting Notes Summarizer
+<div align="center">
+  <h1>📝 AI-Powered Meeting Notes Summarizer</h1>
+  <p>A full-stack web application that uses Google Gemini AI to generate structured summaries from meeting transcripts and allows sharing via email.</p>
+  
+  <a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/Node.js-18%2B-green" alt="Node.js"></a>
+  <a href="https://expressjs.com/"><img src="https://img.shields.io/badge/Express.js-4.18.2-000000" alt="Express.js"></a>
+  <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google%20Gemini%20API-AI-blueviolet" alt="Google Gemini AI"></a>
+  <a href="https://www.npmjs.com/package/nodemailer"><img src="https://img.shields.io/badge/Nodemailer-Email-yellow" alt="Nodemailer"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License"></a>
+</div>
 
-A full-stack web application that uses Google Gemini AI to generate structured summaries from meeting transcripts and allows sharing via email.
+---
 
-## Features
+## ✨ Features
 
-- **File Upload**: Upload text files containing meeting transcripts
-- **Direct Text Input**: Paste transcript text directly into the interface
-- **Custom Instructions**: Add custom prompts to tailor the summary format
-- **AI-Powered Summarization**: Uses Google Gemini for intelligent summarization
-- **Editable Summaries**: Edit the generated summary before sharing
-- **Email Sharing**: Share summaries via email to multiple recipients
+- **File Upload:** Upload text files containing meeting transcripts
+- **Direct Text Input:** Paste transcript text directly into the interface
+- **Custom Instructions:** Add custom prompts to tailor the summary format
+- **AI-Powered Summarization:** Uses Google Gemini for intelligent summarization
+- **Editable Summaries:** Edit the generated summary before sharing
+- **Email Sharing:** Share summaries via email to multiple recipients
 
-## Tech Stack
+---
+
+## 🛠️ Tech Stack
 
 ### Backend
 - **Node.js** with Express.js framework
@@ -27,10 +38,12 @@ A full-stack web application that uses Google Gemini AI to generate structured s
 - **Fetch API** for backend communication
 
 ### Deployment
-- **Backend**: Node.js server (can be deployed on Heroku, Railway, etc.)
-- **Frontend**: Static files served by Express
+- **Backend:** Node.js server (Heroku, Railway, etc.)
+- **Frontend:** Static files served by Express
 
-## Setup Instructions
+---
+
+## 🚀 Setup Instructions
 
 ### 1. Clone and Install Dependencies
 
@@ -65,10 +78,9 @@ NODE_ENV=development or production
 
 1. Enable 2-factor authentication on your Gmail account
 2. Generate an App Password:
-   - Go to Google Account settings
-   - Security → 2-Step Verification → App passwords
+   - Google Account settings → Security → 2-Step Verification → App passwords
    - Generate a password for "Mail"
-   - Use this password in `EMAIL_PASS`(.env)
+   - Use this password in `EMAIL_PASS` (.env)
 
 ### 4. Run the Application
 
@@ -82,10 +94,12 @@ npm start
 
 The application will be available at `http://localhost:3000`
 
-## API Endpoints
+---
+
+## 🌐 API Endpoints
 
 ### POST `/api/generate-summary`
-Generates AI summary from transcript text or uploaded file.
+Generate AI summary from transcript text or uploaded file.
 
 **Request:**
 - `transcriptText` (string): Direct text input
@@ -100,7 +114,7 @@ Generates AI summary from transcript text or uploaded file.
 ```
 
 ### POST `/api/share-summary`
-Shares summary via email.
+Share summary via email.
 
 **Request:**
 ```json
@@ -121,29 +135,37 @@ Shares summary via email.
 ### GET `/api/health`
 Health check endpoint.
 
-## Usage Flow
+---
 
-1. **Upload Transcript**: Choose a transcript file or paste transcript directly
-2. **Add Instructions**: Optionally specify how you want the summary formatted
-3. **Generate Summary**: Click "Generate Summary" to process with AI
-4. **Edit Summary**: Modify the generated summary as needed
-5. **Share**: Enter email addresses and send the summary
+## 📚 Usage Flow
 
-## Example Custom Prompts
+1. **Upload Transcript:** Choose a transcript file or paste transcript directly
+2. **Add Instructions:** Optionally specify how you want the summary formatted
+3. **Generate Summary:** Click "Generate Summary" to process with AI
+4. **Edit Summary:** Modify the generated summary as needed
+5. **Share:** Enter email addresses and send the summary
+
+---
+
+## 📝 Example Custom Prompts
 
 - "Summarize in bullet points for executives"
 - "Highlight only action items and deadlines"
 - "Create a structured summary with key decisions and next steps"
 - "Focus on technical discussions and implementation details"
 
-## Error Handling
+---
+
+## 🩺 Error Handling
 
 - File upload validation (text files only, 10MB limit)
 - Email address validation
 - API error handling with user-friendly messages
 - Loading states and status indicators
 
-## Security Considerations
+---
+
+## 🔐 Security Considerations
 
 - Environment variables for sensitive data
 - File type validation
@@ -151,7 +173,9 @@ Health check endpoint.
 - CORS configuration
 - Rate limiting (can be added for production)
 
-## Deployment Notes
+---
+
+## 🚀 Deployment Notes
 
 For production deployment:
 1. Set `NODE_ENV=production`
@@ -161,7 +185,9 @@ For production deployment:
 5. Set up proper logging
 6. Configure HTTPS
 
-## Dependencies
+---
+
+## 📦 Dependencies
 
 ### Production
 - `express`: Web framework
@@ -173,3 +199,17 @@ For production deployment:
 
 ### Development
 - `nodemon`: Development server with auto-restart
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <b>Contact:</b> <a href="mailto:rahman14122004@gmail.com">rahman14122004@gmail.com</a> |
+  <a href="https://www.linkedin.com/in/rahman141204">LinkedIn</a><br>
+  <b>Created and copyright © by Ar141204</b>
+</p>

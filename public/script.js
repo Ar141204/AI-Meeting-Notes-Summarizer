@@ -117,7 +117,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            const data = await response.json();
+            // Check if response is ok and has content
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server error (${response.status}): ${errorText || 'Unknown error'}`);
+            }
+
+            // Check if response has content before parsing JSON
+            const responseText = await response.text();
+            if (!responseText.trim()) {
+                throw new Error('Server returned empty response');
+            }
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                console.error('Response text:', responseText);
+                throw new Error('Invalid response from server. Please check server logs.');
+            }
             
             if (data.error) {
                 throw new Error(data.error);
@@ -139,7 +158,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             console.error('Error:', error);
-            alert('Error generating summary: ' + error.message);
+            
+            // More detailed error message for debugging
+            let errorMessage = error.message;
+            if (errorMessage.includes('Server error')) {
+                errorMessage += '\n\nThis appears to be a server-side issue. Please check:\n1. Server logs in Render dashboard\n2. Environment variables are set correctly\n3. Server is running properly';
+            } else if (errorMessage.includes('Invalid response')) {
+                errorMessage += '\n\nThe server returned an invalid response. This usually means:\n1. Server crashed or timed out\n2. Missing environment variables\n3. API rate limits exceeded';
+            }
+            
+            alert('Error generating summary: ' + errorMessage);
             
             // Hide loading state
             generateBtn.disabled = false;

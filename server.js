@@ -6,6 +6,8 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 // Force garbage collection periodically to prevent memory buildup
@@ -35,12 +37,24 @@ app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static('public'));
 
-// Configure multer for file uploads
-const storage = multer.memoryStorage();
+// Configure multer for file uploads with disk storage for audio files
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = '/tmp/uploads';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
 const upload = multer({ 
   storage: storage,
   limits: { 
-    fileSize: 5 * 1024 * 1024, // Reduced to 5MB limit to prevent memory issues
+    fileSize: 10 * 1024 * 1024, // 10MB limit for audio files
     files: 1 // Only allow 1 file at a time
   },
   fileFilter: (req, file, cb) => {
@@ -81,27 +95,37 @@ app.get('/', (req, res) => {
 
 // Helper function to extract text from different file types
 async function extractTextFromFile(file) {
-  const { buffer, mimetype, originalname } = file;
+  const { path: filePath, mimetype, originalname, buffer } = file;
   
   try {
     switch (mimetype) {
       case 'text/plain':
-        return buffer.toString('utf-8');
+        if (buffer) {
+          return buffer.toString('utf-8');
+        } else {
+          const textContent = fs.readFileSync(filePath, 'utf-8');
+          fs.unlinkSync(filePath); // Clean up temp file
+          return textContent;
+        }
         
       case 'application/pdf':
-        const pdfData = await pdfParse(buffer);
-        const pdfText = pdfData.text;
-        // Clear buffer from memory
-        buffer = null;
-        return pdfText;
+        let pdfBuffer = buffer;
+        if (!pdfBuffer) {
+          pdfBuffer = fs.readFileSync(filePath);
+          fs.unlinkSync(filePath); // Clean up temp file
+        }
+        const pdfData = await pdfParse(pdfBuffer);
+        return pdfData.text;
         
       case 'application/msword':
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-        const docResult = await mammoth.extractRawText({ buffer });
-        const docText = docResult.value;
-        // Clear buffer from memory
-        buffer = null;
-        return docText;
+        let docBuffer = buffer;
+        if (!docBuffer) {
+          docBuffer = fs.readFileSync(filePath);
+          fs.unlinkSync(filePath); // Clean up temp file
+        }
+        const docResult = await mammoth.extractRawText({ buffer: docBuffer });
+        return docResult.value;
         
       case 'audio/mpeg':
       case 'audio/wav':
@@ -111,44 +135,52 @@ async function extractTextFromFile(file) {
       case 'audio/ogg':
         // For audio files, we need to use OpenAI Whisper
         if (!openai) {
+          if (filePath) fs.unlinkSync(filePath); // Clean up temp file
           throw new Error('Audio transcription requires OpenAI API key. Please either:\n1. Add OPENAI_API_KEY to your .env file, or\n2. Use the text input field to paste your transcript manually after transcribing the audio file.');
         }
         
         try {
-          // Check file size for audio processing (limit to 2MB for memory efficiency)
-          if (buffer.length > 2 * 1024 * 1024) {
-            throw new Error('Audio file too large. Please use files smaller than 2MB or use text input instead.');
+          // Force garbage collection before processing
+          if (global.gc) {
+            global.gc();
           }
           
-          // Create a readable stream from buffer for OpenAI API
-          const { Readable } = require('stream');
-          const audioStream = new Readable();
-          audioStream.push(buffer);
-          audioStream.push(null);
-          
-          // Add filename property to stream for OpenAI API
-          audioStream.path = originalname;
-          
+          // Use file path directly for OpenAI API (more memory efficient)
           const transcription = await openai.audio.transcriptions.create({
-            file: audioStream,
+            file: fs.createReadStream(filePath),
             model: "whisper-1",
           });
           
-          // Clear buffer from memory immediately after use
-          buffer = null;
+          // Clean up temp file
+          fs.unlinkSync(filePath);
+          
+          // Force garbage collection after processing
+          if (global.gc) {
+            global.gc();
+          }
           
           return transcription.text;
         } catch (audioError) {
           console.error('Audio transcription error:', audioError);
-          // Clear buffer from memory on error
-          buffer = null;
+          // Clean up temp file on error
+          if (filePath && fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+          // Force garbage collection on error
+          if (global.gc) {
+            global.gc();
+          }
           throw new Error(`Audio transcription failed: ${audioError.message}. Please try a smaller audio file or use text input instead.`);
         }
         
       default:
+        if (filePath) fs.unlinkSync(filePath); // Clean up temp file
         throw new Error('Unsupported file type');
     }
   } catch (error) {
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); // Clean up temp file on any error
+    }
     throw new Error(`Failed to extract text from ${mimetype}: ${error.message}`);
   }
 }

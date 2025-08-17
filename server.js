@@ -1,17 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
-const nodemailer = require('nodemailer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
-const path = require('path');
-const fs = require('fs');
 require('dotenv').config();
 
+// Force garbage collection periodically to prevent memory buildup
+if (global.gc) {
+  setInterval(() => {
+    global.gc();
+  }, 30000); // Run GC every 30 seconds
+}
+
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -85,12 +88,18 @@ async function extractTextFromFile(file) {
         
       case 'application/pdf':
         const pdfData = await pdfParse(buffer);
-        return pdfData.text;
+        const pdfText = pdfData.text;
+        // Clear buffer from memory
+        buffer = null;
+        return pdfText;
         
       case 'application/msword':
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         const docResult = await mammoth.extractRawText({ buffer });
-        return docResult.value;
+        const docText = docResult.value;
+        // Clear buffer from memory
+        buffer = null;
+        return docText;
         
       case 'audio/mpeg':
       case 'audio/wav':

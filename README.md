@@ -7,6 +7,10 @@
   <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google%20Gemini%20API-AI-blueviolet" alt="Google Gemini AI"></a>
   <a href="https://www.npmjs.com/package/nodemailer"><img src="https://img.shields.io/badge/Nodemailer-Email-yellow" alt="Nodemailer"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License"></a>
+  <br>
+  <a href="https://ai-meeting-notes-summarizer-ntca.onrender.com">
+    <img src="https://img.shields.io/badge/Live%20Demo-ai--meeting--notes--summarizer--ntca.onrender.com-blue?logo=firefox-browser" alt="Live Demo">
+  </a>
 </div>
 
 ---
@@ -38,7 +42,7 @@
 - **Fetch API** for backend communication
 
 ### Deployment
-- **Backend:** Node.js server (Heroku, Railway, etc.)
+- **Backend:** Node.js server (Heroku, Railway, Render, etc.)
 - **Frontend:** Static files served by Express
 
 ---

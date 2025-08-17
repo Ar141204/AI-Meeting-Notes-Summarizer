@@ -16,6 +16,7 @@ if (global.gc) {
 }
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);

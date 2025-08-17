@@ -97,29 +97,28 @@ async function extractTextFromFile(file) {
       case 'audio/ogg':
         // For audio files, we need to use OpenAI Whisper
         if (!openai) {
-          throw new Error('OpenAI API key required for audio transcription. Please configure OPENAI_API_KEY in your .env file.');
+          throw new Error('Audio transcription requires OpenAI API key. Please either:\n1. Add OPENAI_API_KEY to your .env file, or\n2. Use the text input field to paste your transcript manually after transcribing the audio file.');
         }
         
-        // Create a temporary file for OpenAI API
-        const tempFilePath = path.join(__dirname, 'temp_audio_' + Date.now() + path.extname(originalname));
-        fs.writeFileSync(tempFilePath, buffer);
-        
         try {
+          // Create a readable stream from buffer for OpenAI API
+          const { Readable } = require('stream');
+          const audioStream = new Readable();
+          audioStream.push(buffer);
+          audioStream.push(null);
+          
+          // Add filename property to stream for OpenAI API
+          audioStream.path = originalname;
+          
           const transcription = await openai.audio.transcriptions.create({
-            file: fs.createReadStream(tempFilePath),
+            file: audioStream,
             model: "whisper-1",
           });
           
-          // Clean up temp file
-          fs.unlinkSync(tempFilePath);
-          
           return transcription.text;
         } catch (audioError) {
-          // Clean up temp file even if error occurs
-          if (fs.existsSync(tempFilePath)) {
-            fs.unlinkSync(tempFilePath);
-          }
-          throw audioError;
+          console.error('Audio transcription error:', audioError);
+          throw new Error(`Audio transcription failed: ${audioError.message}. Please try a smaller audio file or use text input instead.`);
         }
         
       default:
@@ -253,6 +252,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
-app.listen(PORT,'0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

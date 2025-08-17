@@ -81,7 +81,7 @@ app.get('/', (req, res) => {
 
 // Helper function to extract text from different file types
 async function extractTextFromFile(file) {
-  const { buffer, mimetype, originalname } = file;
+  let { buffer, mimetype, originalname } = file;
   
   try {
     switch (mimetype) {

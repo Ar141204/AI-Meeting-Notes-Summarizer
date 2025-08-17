@@ -27,14 +27,17 @@ if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_ap
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '2mb' }));
 app.use(express.static('public'));
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  limits: { 
+    fileSize: 5 * 1024 * 1024, // Reduced to 5MB limit to prevent memory issues
+    files: 1 // Only allow 1 file at a time
+  },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       'text/plain',
@@ -101,6 +104,11 @@ async function extractTextFromFile(file) {
         }
         
         try {
+          // Check file size for audio processing (limit to 2MB for memory efficiency)
+          if (buffer.length > 2 * 1024 * 1024) {
+            throw new Error('Audio file too large. Please use files smaller than 2MB or use text input instead.');
+          }
+          
           // Create a readable stream from buffer for OpenAI API
           const { Readable } = require('stream');
           const audioStream = new Readable();
@@ -115,9 +123,14 @@ async function extractTextFromFile(file) {
             model: "whisper-1",
           });
           
+          // Clear buffer from memory immediately after use
+          buffer = null;
+          
           return transcription.text;
         } catch (audioError) {
           console.error('Audio transcription error:', audioError);
+          // Clear buffer from memory on error
+          buffer = null;
           throw new Error(`Audio transcription failed: ${audioError.message}. Please try a smaller audio file or use text input instead.`);
         }
         
